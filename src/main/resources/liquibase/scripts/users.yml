@@ -1,0 +1,66 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2
+      author: bornartem
+      context: prod
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  startWith: 1
+                  incrementBy: 1
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: first_name
+                  type: varchar(255)
+              - column:
+                  name: last_name
+                  type: varchar(255)
+              - column:
+                  name: password
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: phone
+                  type: varchar(255)
+              - column:
+                  name: role
+                  type: varchar(255)
+                  constraints:
+                    check: ((role)::text = ANY (ARRAY['USER', 'ADMIN']))
+              - column:
+                  name: username
+                  type: varchar(255)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: avatar_id
+                  type: bigint
+              - addUniqueConstraint:
+                  tableName: users
+                  columnNames: avatar_id
+                  constraintName: uk_avatar_id
+              - addUniqueConstraint:
+                  tableName: users
+                  columnNames: username
+                  constraintName: uk_username
+              - createIndex:
+                  tableName: users
+                  indexName: idx_username
+                  columns:
+                    - column:
+                        name: username
+              - addForeignKeyConstraint:
+                  baseTableName: users
+                  baseColumnNames: avatar_id
+                  referencedTableName: images
+                  referencedColumnNames: id
+                  constraintName: fk_users_images
